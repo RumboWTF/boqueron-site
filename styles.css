@@ -1,0 +1,54 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #F4F0E8;
+  color: #2C2218;
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+main {
+  text-align: center;
+  max-width: 420px;
+}
+
+.fish {
+  width: 100px;
+  height: auto;
+  margin-bottom: 20px;
+}
+
+h1 {
+  font-family: 'Lora', Georgia, serif;
+  font-size: 42px;
+  font-weight: 400;
+  color: #2C2218;
+  margin-bottom: 8px;
+}
+
+.tagline {
+  font-size: 16px;
+  color: #7A6A58;
+  margin-bottom: 4px;
+}
+
+.muted {
+  font-size: 14px;
+  color: #9A8272;
+  margin-bottom: 48px;
+}
+
+.soon {
+  font-size: 12px;
+  color: #9A8272;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
