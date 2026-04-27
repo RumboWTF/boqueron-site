@@ -17,7 +17,42 @@
     <h1>Boquerón</h1>
     <p class="tagline">aprende español, palabra a palabra</p>
     <p class="muted">con sabor andaluz</p>
+
+    <section class="expression" id="expression" hidden>
+      <p class="label">expresión del día</p>
+      <p class="expression-text" id="expression-text"></p>
+      <p class="explanation" id="explanation-text"></p>
+    </section>
+
     <p class="soon">próximamente</p>
   </main>
+
+  <script>
+    (async () => {
+      const SUPABASE_URL = 'https://yjjgmrgwpppppkocquoz.supabase.co';
+      const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inlqamdtcmd3cHBwcHBrb2NxdW96Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU5MTkwNzksImV4cCI6MjA5MTQ5NTA3OX0.KhnSEjPFLfaTrQCOxgcjH2sTC18MWglGi3qBCbXJN6c';
+
+      try {
+        const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Madrid' });
+        const url = `${SUPABASE_URL}/rest/v1/daily_expressions?select=expression,explanation&active=eq.true&display_date=eq.${today}&limit=1`;
+        const res = await fetch(url, {
+          headers: {
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          },
+        });
+        if (!res.ok) return;
+        const data = await res.json();
+        if (!Array.isArray(data) || data.length === 0) return;
+
+        const { expression, explanation } = data[0];
+        document.getElementById('expression-text').textContent = expression;
+        document.getElementById('explanation-text').textContent = explanation;
+        document.getElementById('expression').hidden = false;
+      } catch (e) {
+        // Silent fail — page still shows the static content.
+      }
+    })();
+  </script>
 </body>
 </html>
