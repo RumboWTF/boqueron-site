@@ -90,81 +90,98 @@ h1 {
   text-decoration: underline;
 }
 
-/* Privacy policy page */
+/* Privacy policy page — document layout (scoped to .privacy-layout) */
 body.privacy-layout {
   align-items: flex-start;
   justify-content: center;
+  background: #F4F0E8;
+  color: #2C2218;
 }
 
 main.privacy-page {
   text-align: left;
-  max-width: 640px;
+  max-width: 620px;
   width: 100%;
 }
 
 main.privacy-page h1 {
   font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 36px;
+  font-size: 32px;
   font-weight: 500;
-  color: #2A4458;
-  margin-bottom: 8px;
+  color: #2C2218;
+  line-height: 1.2;
+  margin-bottom: 6px;
 }
 
 .last-updated {
-  font-size: 13px;
-  color: #8A7560;
-  margin-bottom: 32px;
+  font-size: 12px;
+  color: #9A8272;
+  margin-bottom: 28px;
 }
 
 main.privacy-page h2 {
-  font-family: 'Cormorant Garamond', Georgia, serif;
-  font-size: 22px;
-  font-weight: 500;
-  color: #2A4458;
-  margin-top: 28px;
-  margin-bottom: 12px;
+  font-family: 'DM Sans', -apple-system, sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #2C2218;
+  margin-top: 40px;
+  margin-bottom: 14px;
+  line-height: 1.3;
 }
 
 main.privacy-page p {
   font-size: 15px;
-  line-height: 1.65;
-  color: #4a5560;
+  line-height: 1.68;
+  color: #2C2218;
   margin-bottom: 14px;
 }
 
+main.privacy-page strong {
+  color: #2C2218;
+  font-weight: 600;
+}
+
 main.privacy-page ul {
-  margin: 12px 0 16px 1.25rem;
-  padding: 0;
+  margin: 14px 0 18px;
+  padding-left: 1.5rem;
+  list-style-type: disc;
 }
 
 main.privacy-page li {
   font-size: 15px;
-  line-height: 1.65;
-  color: #4a5560;
-  margin-bottom: 8px;
+  line-height: 1.68;
+  color: #2C2218;
+  margin-bottom: 10px;
+  padding-left: 0.25rem;
+}
+
+main.privacy-page li::marker {
+  color: #7A6A58;
 }
 
 .back-link {
-  margin-bottom: 28px;
+  margin-bottom: 24px;
+  text-align: left;
 }
 
 main.privacy-page .back-link a {
-  font-size: 13px;
-  color: #8A7560;
+  font-size: 12px;
+  color: #7A6A58;
   text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+main.privacy-page .back-link a:hover {
+  color: #2C2218;
+  text-decoration: underline;
 }
 
 main.privacy-page a {
-  color: #5A6E7E;
+  color: #7A6A58;
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 main.privacy-page a:hover {
-  color: #2A4458;
-}
-
-main.privacy-page .back-link a:hover {
-  color: #8A7560;
-  text-decoration: underline;
+  color: #2C2218;
 }
