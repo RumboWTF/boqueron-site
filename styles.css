@@ -75,3 +75,96 @@ h1 {
   text-transform: uppercase;
   letter-spacing: 2px;
 }
+
+.footer-link {
+  margin-top: 28px;
+  font-size: 11px;
+}
+
+.footer-link a {
+  color: #8A7560;
+  text-decoration: none;
+}
+
+.footer-link a:hover {
+  text-decoration: underline;
+}
+
+/* Privacy policy page */
+body.privacy-layout {
+  align-items: flex-start;
+  justify-content: center;
+}
+
+main.privacy-page {
+  text-align: left;
+  max-width: 640px;
+  width: 100%;
+}
+
+main.privacy-page h1 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 36px;
+  font-weight: 500;
+  color: #2A4458;
+  margin-bottom: 8px;
+}
+
+.last-updated {
+  font-size: 13px;
+  color: #8A7560;
+  margin-bottom: 32px;
+}
+
+main.privacy-page h2 {
+  font-family: 'Cormorant Garamond', Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: #2A4458;
+  margin-top: 28px;
+  margin-bottom: 12px;
+}
+
+main.privacy-page p {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #4a5560;
+  margin-bottom: 14px;
+}
+
+main.privacy-page ul {
+  margin: 12px 0 16px 1.25rem;
+  padding: 0;
+}
+
+main.privacy-page li {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #4a5560;
+  margin-bottom: 8px;
+}
+
+.back-link {
+  margin-bottom: 28px;
+}
+
+main.privacy-page .back-link a {
+  font-size: 13px;
+  color: #8A7560;
+  text-decoration: none;
+}
+
+main.privacy-page a {
+  color: #5A6E7E;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+main.privacy-page a:hover {
+  color: #2A4458;
+}
+
+main.privacy-page .back-link a:hover {
+  color: #8A7560;
+  text-decoration: underline;
+}
