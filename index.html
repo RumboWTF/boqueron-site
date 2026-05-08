@@ -36,7 +36,11 @@
 
       try {
         const today = new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Madrid' });
-        const url = `${SUPABASE_URL}/rest/v1/daily_expressions?select=expression,explanation&active=eq.true&display_date=eq.${today}&limit=1`;
+        const epoch = new Date(2025, 0, 1);
+        const todayDate = new Date(`${today}T00:00:00`);
+        const rawDayIndex = Math.floor((todayDate.getTime() - epoch.getTime()) / 86400000);
+        const dayIndex = Math.max(0, rawDayIndex);
+        const url = `${SUPABASE_URL}/rest/v1/daily_expressions?select=expression,explanation&active=eq.true&order=sort_order.asc`;
         const res = await fetch(url, {
           headers: {
             'apikey': SUPABASE_ANON_KEY,
@@ -47,7 +51,9 @@
         const data = await res.json();
         if (!Array.isArray(data) || data.length === 0) return;
 
-        const { expression, explanation } = data[0];
+        const pick = data[dayIndex % data.length];
+        if (!pick) return;
+        const { expression, explanation } = pick;
         document.getElementById('expression-text').textContent = expression;
         document.getElementById('explanation-text').textContent = explanation;
         document.getElementById('expression').hidden = false;
