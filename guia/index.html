@@ -10,6 +10,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css">
   <style>
     .lang-toggle {
       font-size: 12px;
@@ -38,6 +39,12 @@
       margin: 0 6px;
       color: #8A7560;
     }
+    main.privacy-page h2 .screen-icon {
+      color: #2C2218;
+      font-size: 0.85em;
+      margin-right: 0.4em;
+      vertical-align: baseline;
+    }
   </style>
 </head>
 <body class="privacy-layout">
@@ -59,17 +66,17 @@
 
       <p>It's built around one idea: the words you actually encounter are the ones worth learning.</p>
 
-      <p>You hear a word in a bar, see one on a sign, read one in a message, or take notes in a class. You save it in one place. The app generates a short definition and example. Later, you review it. Over time, the words you struggle with come back more often; the ones you know fade into the background.</p>
+      <p>You hear a word in a bar, see one on a sign, read one in a message, or take notes in a class. You save it in one place. The app generates a short definition and examples. Later, you review it. Over time, the words you struggle with come back more often; the ones you know fade into the background.</p>
 
-      <p>It's not a course. There are no lessons, no points, no leaderboards. There is a quiet streak counter in Progreso if you care to look, but nothing pushes it at you.</p>
+      <p>It's not a course. There are no lessons, no points, no leaderboards. There is a quiet streak counter in Progreso if you care to look.</p>
 
       <p>What it really is: one home for all your Spanish words. Not scattered across a notebook, the Notes app, OneNote, screenshots, and post-its. You bring the words; Boquerón helps you remember them.</p>
 
       <h2>How to use it well</h2>
 
-      <p>Capture words while the context is fresh. Heard something in conversation? Save it right then with the mic. Saw it on a sign? Type it in or snap a photo. For notes from a class, photographing the page later is fine — that's what the camera is for.</p>
+      <p>Capture words while the context is fresh. Heard something in conversation? Save it right then with the mic. Saw it on a sign? Type it in or snap a photo. For notes from a class, photographing them later is fine — best is a clean section of just the new vocabulary, not a full page of notes.</p>
 
-      <p>Hablar mode is the default in Repaso, and it's where the real learning happens. Saying words out loud is one of the most effective ways to remember them. The speech recognition isn't perfect, especially for unusual words or strong accents — but the act of speaking matters more than whether the app correctly recognizes you. If it misses, just say the word again.</p>
+      <p>Hablar mode is the default in Repaso, and it's where the real learning happens. Saying words out loud is one of the most effective ways to remember them. The speech recognition isn't perfect, but the act of speaking matters more than whether the app correctly recognizes you. If it misses, just say the word again.</p>
 
       <p>Use the rating buttons honestly in Leer mode. The app uses them to decide when to bring each word back. Tap "fácil" only when you really knew it instantly.</p>
 
@@ -77,25 +84,23 @@
 
       <h2>The screens</h2>
 
-      <h2>Captura</h2>
+      <h2><i class="mdi mdi-fish screen-icon" aria-hidden="true"></i> Captura</h2>
 
       <p>Where you add new words. Three ways:</p>
 
       <ul>
         <li>Type the word in the text field.</li>
         <li>Tap the microphone and speak the word.</li>
-        <li>Tap the camera to capture text from an image — typically a page of notes from a Spanish class, a list of new vocabulary, or any printed word list. The app extracts the text using your device's image processing.</li>
+        <li>Tap the camera to capture text from an image — typically a list of new vocabulary from a Spanish class or any printed word list.</li>
       </ul>
 
       <p>When the input looks like a Spanish word but might be misspelled, you'll see a small modal suggesting close matches. Pick a suggestion or save what you typed.</p>
 
-      <p>After saving, the app generates a short definition (in English) and one or two example sentences (in Spanish, with the word highlighted). Most words also come with a few related words you can add later.</p>
+      <p>After saving, the app generates a short definition in English and example sentences in Spanish. Most words also come with a few related words you can add later.</p>
 
-      <p>There's a daily limit of around five enrichments per day for words you re-process or update — capturing new words from Captura or the camera doesn't count against it. If the definition isn't quite right, you can ask the app to redo it from the word card; that uses one slot from the daily limit.</p>
+      <p>If the definition isn't quite right, you can ask the app to redo it from the word card.</p>
 
-      <p>If the app can't recognize the input as Spanish (typos, English words, gibberish), it still saves the word but marks it with a small fish illustration and the message "no la reconocemos." You can keep it, edit it, or delete it. Words marked this way won't appear in Repaso.</p>
-
-      <h2>Mis palabras</h2>
+      <h2><i class="mdi mdi-format-list-bulleted screen-icon" aria-hidden="true"></i> Mis palabras</h2>
 
       <p>The full list of words you've saved.</p>
 
@@ -113,32 +118,17 @@
 
       <p>Swipe left on a word to archive it. Archived words stay in your collection but don't appear in Repaso. Find them via "ver archivadas" at the top.</p>
 
-      <p>Swipe right to delete permanently. You'll be asked to confirm.</p>
+      <p>Swipe right to delete permanently.</p>
 
       <p>Tap any word to open its detail card — full definition, examples, audio, related words you can add to your vocabulary with a tap.</p>
 
-      <h2>Repaso</h2>
+      <h2><i class="mdi mdi-head-check-outline screen-icon" aria-hidden="true"></i> Repaso</h2>
 
-      <p>Where you review words. Two modes, toggled at the top: Leer and Hablar.</p>
-
-      <p><strong>Leer (read)</strong></p>
-
-      <p>The definition appears in English; you think about the Spanish word. Tap "revelar" to see it. Then rate yourself:</p>
-
-      <ul>
-        <li>sin idea — didn't know it at all</li>
-        <li>difícil — knew it after a struggle</li>
-        <li>bien — knew it without much effort</li>
-        <li>fácil — knew it instantly</li>
-      </ul>
-
-      <p>Your rating decides when the word reappears. The labels show rough timeframes (mañana, pronto, días, semana), but actual spacing depends on your full review history. Words you keep rating "fácil" gradually move out to weeks; ones you struggle with keep coming back.</p>
-
-      <p>Setting: in Ajustes you can choose whether Leer starts by showing the Spanish word or the English definition. The default shows the definition first, so you have to recall the Spanish.</p>
+      <p>Where you review words. Two modes, toggled at the top: Hablar (the default) and Leer.</p>
 
       <p><strong>Hablar (speak)</strong></p>
 
-      <p>You see the definition; tap play to start. The word itself stays hidden — say it out loud, and Boquerón listens until you've finished speaking. The mic stays open while you think, so you don't need to rush.</p>
+      <p>You see the definition; tap play to start. The word itself stays hidden — say it out loud, and Boquerón listens until you've finished speaking.</p>
 
       <p>If you can't remember the word, tap "mostrar pistas":</p>
 
@@ -149,23 +139,43 @@
 
       <p>If the app doesn't recognize what you said, it'll ask you to try again. Recognition handles common words well; unusual words or those with accent marks like ú and í can be trickier. The second attempt usually works.</p>
 
-      <p>Tap "saltar" to skip a word without rating it.</p>
-
       <p>For a more natural Spanish voice, download the enhanced Spanish voice on your iPhone: open Settings → Accessibility → Spoken Content → Voices → Spanish → pick a voice → tap the download arrow next to the "Enhanced" version.</p>
 
-      <h2>Progreso</h2>
+      <p><strong>Leer (read)</strong></p>
+
+      <p>Two directions, set in Ajustes:</p>
+
+      <ul>
+        <li>Definition first (default): the English definition appears, you think about the Spanish word.</li>
+        <li>Spanish first: the Spanish word appears, you think about the meaning.</li>
+      </ul>
+
+      <p>Either way, tap "revelar" to flip the card and see the other side. Then rate yourself:</p>
+
+      <ul>
+        <li>sin idea — didn't know it at all</li>
+        <li>difícil — knew it after a struggle</li>
+        <li>bien — knew it without much effort</li>
+        <li>fácil — knew it instantly</li>
+      </ul>
+
+      <p>Your rating decides when the word reappears. The labels show rough timeframes (mañana, pronto, días, semana), but actual spacing depends on your full review history. Words you keep rating "fácil" gradually move out to weeks; ones you struggle with keep coming back.</p>
+
+      <p>Tap "saltar" to skip a word without rating it.</p>
+
+      <h2><i class="mdi mdi-chart-line screen-icon" aria-hidden="true"></i> Progreso</h2>
 
       <p>Shows how things are going.</p>
 
-      <p><strong>Expresión del día</strong> — a different Spanish expression each day, leaning Andalusian and malagueño in flavor. These are the kind of phrases you'd actually hear in a café in Málaga, written by Clara from SpanishToni Academy (thank you Clara!), with short explanations of when and how they're used.</p>
+      <p>Expresión del día — a different Spanish expression each day, leaning Andalusian and malagueño in flavor. These are the kind of phrases you'd actually hear in a café in Málaga, with short explanations of when and how they're used (thank you Clara!)</p>
 
-      <p><strong>Más difíciles</strong> — the words you've missed most often. Good candidates for extra attention.</p>
+      <p>Más difíciles — the words you've missed most often. Good candidates for extra attention.</p>
 
-      <p><strong>Stats</strong> — total words, retention rate (how often you get them right when reviewing), and your current streak of consecutive review days.</p>
+      <p>Stats — total words, retention rate (how often you get them right when reviewing), and your current streak of consecutive review days.</p>
 
-      <p><strong>Actividad</strong> — a heatmap of the last four weeks. Filled squares are days you reviewed words; darker squares mean more activity. The exact color depends on which theme you've chosen in Ajustes.</p>
+      <p>Actividad — a heatmap of the last four weeks. Filled squares are days you reviewed words; darker squares mean more activity.</p>
 
-      <h2>Ajustes</h2>
+      <h2><i class="mdi mdi-cog-outline screen-icon" aria-hidden="true"></i> Ajustes</h2>
 
       <p>Settings, organized into:</p>
 
@@ -180,7 +190,7 @@
 
       <ul>
         <li>Mi meta diaria — how many words you aim to review per day</li>
-        <li>Dirección en Leer (Repaso) — controls which side of the card appears first in Leer mode. By default the definition shows first and you recall the Spanish word. Switch the direction to see the Spanish word first and recall its meaning instead. Both are useful; alternating helps cement words in both directions.</li>
+        <li>Dirección en Leer (Repaso) — controls which side of the card appears first in Leer mode. Switch the direction to see the Spanish word first and recall its meaning instead. Both are useful; alternating helps cement words in both directions.</li>
       </ul>
 
       <p><strong>Cuenta</strong></p>
