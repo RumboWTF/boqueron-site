@@ -39,7 +39,18 @@
       margin: 0 6px;
       color: #8A7560;
     }
-    main.privacy-page h2 .screen-icon {
+    main.privacy-page h2.screen-heading {
+      background: #F0EAE0;
+      border-radius: 12px;
+      padding: 10px 16px;
+      margin-top: 36px;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+    main.privacy-page h2:not(.screen-heading) + h2.screen-heading {
+      margin-top: 20px;
+    }
+    main.privacy-page h2.screen-heading .screen-icon {
       color: #2C2218;
       font-size: 0.85em;
       margin-right: 0.4em;
@@ -84,7 +95,7 @@
 
       <h2>The screens</h2>
 
-      <h2><i class="mdi mdi-fish screen-icon" aria-hidden="true"></i> Captura</h2>
+      <h2 class="screen-heading"><i class="mdi mdi-fish screen-icon" aria-hidden="true"></i> Captura</h2>
 
       <p>Where you add new words. Three ways:</p>
 
@@ -100,7 +111,7 @@
 
       <p>If the definition isn't quite right, you can ask the app to redo it from the word card.</p>
 
-      <h2><i class="mdi mdi-format-list-bulleted screen-icon" aria-hidden="true"></i> Mis palabras</h2>
+      <h2 class="screen-heading"><i class="mdi mdi-format-list-bulleted screen-icon" aria-hidden="true"></i> Mis palabras</h2>
 
       <p>The full list of words you've saved.</p>
 
@@ -122,7 +133,7 @@
 
       <p>Tap any word to open its detail card — full definition, examples, audio, related words you can add to your vocabulary with a tap.</p>
 
-      <h2><i class="mdi mdi-head-check-outline screen-icon" aria-hidden="true"></i> Repaso</h2>
+      <h2 class="screen-heading"><i class="mdi mdi-head-check-outline screen-icon" aria-hidden="true"></i> Repaso</h2>
 
       <p>Where you review words. Two modes, toggled at the top: Hablar (the default) and Leer.</p>
 
@@ -163,7 +174,7 @@
 
       <p>Tap "saltar" to skip a word without rating it.</p>
 
-      <h2><i class="mdi mdi-chart-line screen-icon" aria-hidden="true"></i> Progreso</h2>
+      <h2 class="screen-heading"><i class="mdi mdi-chart-line screen-icon" aria-hidden="true"></i> Progreso</h2>
 
       <p>Shows how things are going.</p>
 
@@ -175,7 +186,7 @@
 
       <p>Actividad — a heatmap of the last four weeks. Filled squares are days you reviewed words; darker squares mean more activity.</p>
 
-      <h2><i class="mdi mdi-cog-outline screen-icon" aria-hidden="true"></i> Ajustes</h2>
+      <h2 class="screen-heading"><i class="mdi mdi-cog-outline screen-icon" aria-hidden="true"></i> Ajustes</h2>
 
       <p>Settings, organized into:</p>
 
