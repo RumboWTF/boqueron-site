@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guide — Boquerón</title>
+  <meta name="description" content="How to use the Boquerón Spanish vocabulary app.">
+  <link rel="icon" type="image/png" href="/fish-email-code.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+  <style>
+    .lang-toggle {
+      font-size: 12px;
+      color: #9A8272;
+      margin-bottom: 20px;
+    }
+    .lang-toggle button {
+      font: inherit;
+      color: #8A7560;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .lang-toggle button:hover {
+      color: #2C2218;
+      text-decoration: underline;
+    }
+    .lang-toggle button.lang-active {
+      color: #2C2218;
+      font-weight: 500;
+      text-decoration: none;
+    }
+    .lang-toggle .sep {
+      margin: 0 6px;
+      color: #8A7560;
+    }
+  </style>
+</head>
+<body class="privacy-layout">
+  <main class="privacy-page">
+    <p class="back-link"><a href="/">← boqueron</a></p>
+
+    <p class="lang-toggle">
+      <button type="button" id="btn-en" class="lang-active" aria-pressed="true">EN</button>
+      <span class="sep" aria-hidden="true">|</span>
+      <button type="button" id="btn-es" aria-pressed="false">ES</button>
+    </p>
+
+    <div id="content-en">
+      <h1>Guide</h1>
+
+      <h2>What Boquerón is</h2>
+
+      <p>Boquerón is a vocabulary app for people learning Spanish, designed for learners around B1 to B2 level — those who can already get by, but keep running into new words in everyday life. It's not built for absolute beginners drowning in 100 new words a day.</p>
+
+      <p>It's built around one idea: the words you actually encounter are the ones worth learning.</p>
+
+      <p>You hear a word in a bar, see one on a sign, read one in a message, or take notes in a class. You save it in one place. The app generates a short definition and example. Later, you review it. Over time, the words you struggle with come back more often; the ones you know fade into the background.</p>
+
+      <p>It's not a course. There are no lessons, no points, no leaderboards. There is a quiet streak counter in Progreso if you care to look, but nothing pushes it at you.</p>
+
+      <p>What it really is: one home for all your Spanish words. Not scattered across a notebook, the Notes app, OneNote, screenshots, and post-its. You bring the words; Boquerón helps you remember them.</p>
+
+      <h2>How to use it well</h2>
+
+      <p>Capture words while the context is fresh. Heard something in conversation? Save it right then with the mic. Saw it on a sign? Type it in or snap a photo. For notes from a class, photographing the page later is fine — that's what the camera is for.</p>
+
+      <p>Hablar mode is the default in Repaso, and it's where the real learning happens. Saying words out loud is one of the most effective ways to remember them. The speech recognition isn't perfect, especially for unusual words or strong accents — but the act of speaking matters more than whether the app correctly recognizes you. If it misses, just say the word again.</p>
+
+      <p>Use the rating buttons honestly in Leer mode. The app uses them to decide when to bring each word back. Tap "fácil" only when you really knew it instantly.</p>
+
+      <p>Spaced repetition works best with short daily sessions. A few minutes most days beats a long session once a week.</p>
+
+      <h2>The screens</h2>
+
+      <h2>Captura</h2>
+
+      <p>Where you add new words. Three ways:</p>
+
+      <ul>
+        <li>Type the word in the text field.</li>
+        <li>Tap the microphone and speak the word.</li>
+        <li>Tap the camera to capture text from an image — typically a page of notes from a Spanish class, a list of new vocabulary, or any printed word list. The app extracts the text using your device's image processing.</li>
+      </ul>
+
+      <p>When the input looks like a Spanish word but might be misspelled, you'll see a small modal suggesting close matches. Pick a suggestion or save what you typed.</p>
+
+      <p>After saving, the app generates a short definition (in English) and one or two example sentences (in Spanish, with the word highlighted). Most words also come with a few related words you can add later.</p>
+
+      <p>There's a daily limit of around five enrichments per day for words you re-process or update — capturing new words from Captura or the camera doesn't count against it. If the definition isn't quite right, you can ask the app to redo it from the word card; that uses one slot from the daily limit.</p>
+
+      <p>If the app can't recognize the input as Spanish (typos, English words, gibberish), it still saves the word but marks it with a small fish illustration and the message "no la reconocemos." You can keep it, edit it, or delete it. Words marked this way won't appear in Repaso.</p>
+
+      <h2>Mis palabras</h2>
+
+      <p>The full list of words you've saved.</p>
+
+      <p>Sort chips at the top let you reorder the list:</p>
+
+      <ul>
+        <li>recientes / antiguas — newest or oldest first</li>
+        <li>A→Z / Z→A — alphabetical</li>
+        <li>difícil — words you find hardest, based on the rating system</li>
+        <li>pendientes — words due for review right now</li>
+        <li>favoritos — only the words you've starred</li>
+      </ul>
+
+      <p>Search by typing any fragment. Tap the star to favorite a word.</p>
+
+      <p>Swipe left on a word to archive it. Archived words stay in your collection but don't appear in Repaso. Find them via "ver archivadas" at the top.</p>
+
+      <p>Swipe right to delete permanently. You'll be asked to confirm.</p>
+
+      <p>Tap any word to open its detail card — full definition, examples, audio, related words you can add to your vocabulary with a tap.</p>
+
+      <h2>Repaso</h2>
+
+      <p>Where you review words. Two modes, toggled at the top: Leer and Hablar.</p>
+
+      <p><strong>Leer (read)</strong></p>
+
+      <p>The definition appears in English; you think about the Spanish word. Tap "revelar" to see it. Then rate yourself:</p>
+
+      <ul>
+        <li>sin idea — didn't know it at all</li>
+        <li>difícil — knew it after a struggle</li>
+        <li>bien — knew it without much effort</li>
+        <li>fácil — knew it instantly</li>
+      </ul>
+
+      <p>Your rating decides when the word reappears. The labels show rough timeframes (mañana, pronto, días, semana), but actual spacing depends on your full review history. Words you keep rating "fácil" gradually move out to weeks; ones you struggle with keep coming back.</p>
+
+      <p>Setting: in Ajustes you can choose whether Leer starts by showing the Spanish word or the English definition. The default shows the definition first, so you have to recall the Spanish.</p>
+
+      <p><strong>Hablar (speak)</strong></p>
+
+      <p>You see the definition; tap play to start. The word itself stays hidden — say it out loud, and Boquerón listens until you've finished speaking. The mic stays open while you think, so you don't need to rush.</p>
+
+      <p>If you can't remember the word, tap "mostrar pistas":</p>
+
+      <ul>
+        <li>Tap once for one letter at a time, up to the full word.</li>
+        <li>Long-press to reveal the whole word at once.</li>
+      </ul>
+
+      <p>If the app doesn't recognize what you said, it'll ask you to try again. Recognition handles common words well; unusual words or those with accent marks like ú and í can be trickier. The second attempt usually works.</p>
+
+      <p>Tap "saltar" to skip a word without rating it.</p>
+
+      <p>For a more natural Spanish voice, download the enhanced Spanish voice on your iPhone: open Settings → Accessibility → Spoken Content → Voices → Spanish → pick a voice → tap the download arrow next to the "Enhanced" version.</p>
+
+      <h2>Progreso</h2>
+
+      <p>Shows how things are going.</p>
+
+      <p><strong>Expresión del día</strong> — a different Spanish expression each day, leaning Andalusian and malagueño in flavor. These are the kind of phrases you'd actually hear in a café in Málaga, written by Clara from SpanishToni Academy (thank you Clara!), with short explanations of when and how they're used.</p>
+
+      <p><strong>Más difíciles</strong> — the words you've missed most often. Good candidates for extra attention.</p>
+
+      <p><strong>Stats</strong> — total words, retention rate (how often you get them right when reviewing), and your current streak of consecutive review days.</p>
+
+      <p><strong>Actividad</strong> — a heatmap of the last four weeks. Filled squares are days you reviewed words; darker squares mean more activity. The exact color depends on which theme you've chosen in Ajustes.</p>
+
+      <h2>Ajustes</h2>
+
+      <p>Settings, organized into:</p>
+
+      <p><strong>Apariencia</strong></p>
+
+      <ul>
+        <li>Tamaño de fuente — small, medium, or large fonts</li>
+        <li>Theme — three color schemes: Costa, Noche, Jardín</li>
+      </ul>
+
+      <p><strong>Aprendizaje</strong></p>
+
+      <ul>
+        <li>Mi meta diaria — how many words you aim to review per day</li>
+        <li>Dirección en Leer (Repaso) — controls which side of the card appears first in Leer mode. By default the definition shows first and you recall the Spanish word. Switch the direction to see the Spanish word first and recall its meaning instead. Both are useful; alternating helps cement words in both directions.</li>
+      </ul>
+
+      <p><strong>Cuenta</strong></p>
+
+      <ul>
+        <li>Cerrar sesión and Eliminar cuenta — logout or delete your account</li>
+        <li>Cómo usar Boquerón — a mini overview inside the app (this longer guide lives on the web)</li>
+      </ul>
+
+      <h2>Tips</h2>
+
+      <p>Hablar isn't always going to recognize you. That's fine. The benefit of saying a word out loud doesn't depend on the app hearing you correctly. Don't let recognition errors throw off your rhythm.</p>
+
+      <p>Misspellings get caught early. If you're not sure how to spell a word from a conversation, just save it. The app will often suggest the correct spelling at the moment of saving, or generate a definition for whatever you typed and you can edit later.</p>
+
+      <p>Re-enrichment exists for a reason. If the definition looks off — wrong meaning, missing a key sense — you can ask the app to regenerate it from the word card.</p>
+
+      <h2>Questions or feedback</h2>
+
+      <p><a href="mailto:hola@boqueron.app">hola@boqueron.app</a></p>
+    </div>
+
+    <div id="content-es" hidden>
+      <h1>Guía de uso</h1>
+      <p>Próximamente — esta guía estará disponible pronto en español.</p>
+    </div>
+  </main>
+
+  <script>
+    (function () {
+      const en = document.getElementById('content-en');
+      const es = document.getElementById('content-es');
+      const btnEn = document.getElementById('btn-en');
+      const btnEs = document.getElementById('btn-es');
+
+      function show(lang) {
+        const isEn = lang === 'en';
+        en.hidden = !isEn;
+        es.hidden = isEn;
+        btnEn.classList.toggle('lang-active', isEn);
+        btnEs.classList.toggle('lang-active', !isEn);
+        btnEn.setAttribute('aria-pressed', String(isEn));
+        btnEs.setAttribute('aria-pressed', String(!isEn));
+        document.documentElement.lang = isEn ? 'en' : 'es';
+      }
+
+      btnEn.addEventListener('click', function () { show('en'); });
+      btnEs.addEventListener('click', function () { show('es'); });
+      show('en');
+    })();
+  </script>
+</body>
+</html>
