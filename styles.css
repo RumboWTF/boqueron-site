@@ -76,8 +76,7 @@ h1 {
 
 .guide-link a {
   color: #7A6A58;
-  text-decoration: underline;
-  text-underline-offset: 2px;
+  text-decoration: none;
 }
 
 .guide-link a:hover {
