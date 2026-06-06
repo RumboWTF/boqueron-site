@@ -218,3 +218,43 @@ main.privacy-page a {
 main.privacy-page a:hover {
   color: #2C2218;
 }
+
+.download {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2.5rem;
+  margin: 2rem auto;
+  flex-wrap: wrap;
+}
+.badge-link {
+  display: inline-block;
+  line-height: 0;
+}
+.appstore-badge {
+  height: 56px;
+  width: auto;
+}
+.qr-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.qr {
+  width: 110px;
+  height: 110px;
+}
+.qr-caption {
+  font-size: 0.85rem;
+  color: #5A6E7E;
+  margin: 0;
+}
+@media (max-width: 480px) {
+  .download {
+    gap: 1.5rem;
+  }
+  .qr-wrap {
+    display: none;
+  }
+}
