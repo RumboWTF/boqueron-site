@@ -70,17 +70,23 @@ h1 {
   padding: 0 8px;
 }
 .guide-link {
-  margin: 40px 0;
-  font-size: 16px;
+  margin: 36px 0 0;
+  font-size: 13px;
 }
 
 .guide-link a {
-  color: #7A6A58;
+  color: #9A8272;
   text-decoration: none;
 }
 
 .guide-link a:hover {
-  color: #2C2218;
+  color: #5A6E7E;
+}
+
+.guide-link + .download {
+  margin-top: 2.25rem;
+  padding-top: 2rem;
+  border-top: 1px solid #E8E2D8;
 }
 
 .soon {
