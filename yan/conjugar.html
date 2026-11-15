@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conjugaciones · práctica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="yan.css">
+</head>
+<body>
+<div class="bar">
+  <a class="home" href="index.html">← práctica</a>
+  <button class="gear" id="gear" aria-label="ajustes">⚙</button>
+</div>
+
+<div class="stage" id="stage">
+  <div class="meta" id="meta"></div>
+  <div class="verb" id="verb"></div>
+  <div class="gloss" id="gloss"></div>
+  <div class="person" id="person"></div>
+  <input class="answer" id="answer" autocomplete="off" autocapitalize="off"
+    autocorrect="off" spellcheck="false" placeholder="escribe la forma…">
+  <div class="accents" id="accents"></div>
+  <div class="fb" id="fb"></div>
+  <div class="row" id="row"></div>
+</div>
+
+<div class="panel" id="panel">
+  <div class="inner">
+    <button class="closex" id="closex">×</button>
+    <h2>Ajustes</h2>
+    <label class="opt"><input type="checkbox" id="commonOnly"> Solo verbos comunes (146)</label>
+    <h3>Tiempos a practicar</h3>
+    <div id="tenseOpts"></div>
+    <h3>Pesos</h3>
+    <button class="ghost" id="resetWeights" style="padding-left:0">restablecer pesos</button>
+  </div>
+</div>
+
+<script src="conjugar.js"></script>
+</body>
+</html>
