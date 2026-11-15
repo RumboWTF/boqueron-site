@@ -115,7 +115,7 @@
   
   // ---- normalization / checking ----
   function norm(s){ return (s||'').trim().toLowerCase().replace(/\s+/g,' '); }
-  function stripAccents(s){ return s.normalize('NFD').replace(/[̀-ͯ]/g,''); }
+  function stripAccents(s){ return s.replace(/á/g,'a').replace(/é/g,'e').replace(/í/g,'i').replace(/ó/g,'o').replace(/ú/g,'u').replace(/ü/g,'u'); }
   function check(input){
     const a = norm(input), b = norm(cur.answer);
     if (a===b) return {ok:true};
