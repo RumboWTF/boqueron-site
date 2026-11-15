@@ -41,10 +41,18 @@ function loadCfg(){
     commonOnly: c.commonOnly !== undefined ? c.commonOnly : true,
     tenses: Array.isArray(c.tenses) && c.tenses.length ? c.tenses : DEFAULT_TENSES.slice(),
     weights: c.weights || {},
-    seen: c.seen || 0
+    seen: c.seen || 0,
+    seenDay: c.seenDay || '',
+    seenToday: c.seenToday || 0
   };
 }
 function saveCfg(){ try{ localStorage.setItem(LS, JSON.stringify(cfg)); }catch(e){} }
+function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
+function bumpCounts(){
+  const t = todayStr();
+  if (cfg.seenDay !== t){ cfg.seenDay = t; cfg.seenToday = 0; }
+  cfg.seenToday++; cfg.seen = (cfg.seen||0)+1;
+}
 
 const $ = s => document.querySelector(s);
 const el = {
@@ -176,16 +184,13 @@ function renderRow(){
     more.className='ghost'; more.textContent='ver más'; more.onclick=()=>adjust(1.8);
     el.row.appendChild(less); el.row.appendChild(more);
   }
-  const cnt=document.createElement('span');
-  cnt.className='count'; cnt.textContent = (cfg.seen||0)+' hechas';
-  el.row.appendChild(cnt);
 }
 function submit(){
   if (answered) return;
   const your = el.answer.value.trim();
   const res = check(your);
   answered = true;
-  cfg.seen = (cfg.seen||0)+1; saveCfg();
+  bumpCounts(); saveCfg();
   el.answer.classList.add(res.ok?'good':'bad');
   let html='';
   if (res.ok){
@@ -213,7 +218,7 @@ function renderHistory(){
     return `<div class="hrow">${ic}<span class="hv">${escapeHtml(h.verb)}</span>`+
       `<span class="hp">${escapeHtml(h.person)}</span><span class="hres">${res}</span></div>`;
   }).join('');
-  el.history.innerHTML = `<div class="hhead">historial</div>${rows}`;
+  el.history.innerHTML = `<div class="hhead">historial · ${cfg.seenToday} hoy</div>${rows}`;
 }
 function escapeHtml(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
 function adjust(factor){
