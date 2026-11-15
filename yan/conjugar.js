@@ -2,19 +2,19 @@
   'use strict';
   const LS = 'yan_conjugar_v1';
   const TENSES = [
-    {key:'presente', label:'Presente', type:'six'},
-    {key:'preterito', label:'Pretérito indefinido', type:'six'},
-    {key:'imperfecto', label:'Imperfecto', type:'six'},
-    {key:'futuro', label:'Futuro', type:'six'},
-    {key:'condicional', label:'Condicional', type:'six'},
-    {key:'subj_presente', label:'Presente de subjuntivo', type:'six'},
-    {key:'subj_imperfecto_ra', label:'Imperfecto de subjuntivo', type:'six'},
-    {key:'imperativo_afirm', label:'Imperativo afirmativo', type:'imper'},
-    {key:'imperativo_neg', label:'Imperativo negativo', type:'imper'},
-    {key:'perfecto', label:'Pretérito perfecto', type:'six'},
-    {key:'pluscuamperfecto', label:'Pluscuamperfecto', type:'six'},
-    {key:'cond_compuesto', label:'Condicional compuesto', type:'six'},
-    {key:'subj_pluscuam', label:'Pluscuamperfecto de subjuntivo', type:'six'},
+    {key:'presente', label:'Presente', desc:'acciones habituales o del presente', type:'six'},
+    {key:'preterito', label:'Pretérito indefinido', desc:'acciones terminadas y puntuales en el pasado', type:'six'},
+    {key:'imperfecto', label:'Imperfecto', desc:'acciones en curso, repetidas o descripción en el pasado', type:'six'},
+    {key:'futuro', label:'Futuro', desc:'acciones futuras o conjetura sobre el presente', type:'six'},
+    {key:'condicional', label:'Condicional', desc:'hipótesis, cortesía o «futuro del pasado»', type:'six'},
+    {key:'subj_presente', label:'Presente de subjuntivo', desc:'deseo, duda o emoción (presente o futuro)', type:'six'},
+    {key:'subj_imperfecto_ra', label:'Imperfecto de subjuntivo', desc:'subjuntivo en pasado; condiciones irreales («si pudiera…»)', type:'six'},
+    {key:'imperativo_afirm', label:'Imperativo afirmativo', desc:'órdenes y peticiones', type:'imper'},
+    {key:'imperativo_neg', label:'Imperativo negativo', desc:'órdenes negativas («no lo hagas»)', type:'imper'},
+    {key:'perfecto', label:'Pretérito perfecto', desc:'pasado reciente o ligado al presente («he hecho»)', type:'six'},
+    {key:'pluscuamperfecto', label:'Pluscuamperfecto', desc:'acción anterior a otra pasada («ya había hecho»)', type:'six'},
+    {key:'cond_compuesto', label:'Condicional compuesto', desc:'lo que habría pasado («habría hecho»)', type:'six'},
+    {key:'subj_pluscuam', label:'Pluscuamperfecto de subjuntivo', desc:'pasado irreal («si hubiera hecho…»)', type:'six'},
   ];
   const SIX = [
     {i:0,label:'yo'},{i:1,label:'tú'},{i:2,label:'él / ella / usted'},
@@ -29,9 +29,10 @@
   
   let VERBS = [];
   let cfg = loadCfg();
-  let recent = [];           // cooldown: recent infinitives
-  let cur = null;            // current question
+  let recent = [];
+  let cur = null;
   let answered = false;
+  let history = [];   // {ok, verb, person, form, your}
   
   function loadCfg(){
     let c = {};
@@ -47,13 +48,13 @@
   
   const $ = s => document.querySelector(s);
   const el = {
-    meta:$('#meta'), verb:$('#verb'), gloss:$('#gloss'), person:$('#person'),
-    answer:$('#answer'), accents:$('#accents'), fb:$('#fb'), row:$('#row'),
+    toptag:$('#toptag'), verb:$('#verb'), gloss:$('#gloss'), tense:$('#tense'),
+    tdesc:$('#tdesc'), person:$('#person'), answer:$('#answer'), accents:$('#accents'),
+    fb:$('#fb'), row:$('#row'), history:$('#history'),
     panel:$('#panel'), gear:$('#gear'), closex:$('#closex'),
     commonOnly:$('#commonOnly'), tenseOpts:$('#tenseOpts'), reset:$('#resetWeights')
   };
   
-  // ---- data load ----
   fetch('conjugations.json').then(r=>r.json()).then(d=>{
     VERBS = d.verbs || d;
     buildSettings();
@@ -63,57 +64,45 @@
     el.gloss.textContent = e.message;
   });
   
-  // ---- weighting / selection ----
   function weightOf(v){
     const w = cfg.weights[v.inf];
     if (w !== undefined) return w;
     return v.common ? 3 : 1;
   }
-  function pool(){
-    return VERBS.filter(v => cfg.commonOnly ? v.common : true);
-  }
-  function activeTenses(){
-    return TENSES.filter(t => cfg.tenses.includes(t.key));
-  }
+  function pool(){ return VERBS.filter(v => cfg.commonOnly ? v.common : true); }
+  function activeTenses(){ return TENSES.filter(t => cfg.tenses.includes(t.key)); }
   function pickVerb(){
-    const p = pool();
-    if (!p.length) return null;
+    const p = pool(); if (!p.length) return null;
     const cool = Math.min(recent.length, Math.max(0, p.length - 3), 12);
     const banned = new Set(recent.slice(-cool));
-    let cand = p.filter(v => !banned.has(v.inf));
-    if (!cand.length) cand = p;
+    let cand = p.filter(v => !banned.has(v.inf)); if (!cand.length) cand = p;
     let total = 0; for (const v of cand) total += weightOf(v);
     let r = Math.random()*total;
     for (const v of cand){ r -= weightOf(v); if (r<=0) return v; }
     return cand[cand.length-1];
   }
   function pickQuestion(){
-    const ats = activeTenses();
-    if (!ats.length) return null;
+    const ats = activeTenses(); if (!ats.length) return null;
     for (let tries=0; tries<40; tries++){
-      const v = pickVerb();
-      if (!v) return null;
+      const v = pickVerb(); if (!v) return null;
       const t = ats[Math.floor(Math.random()*ats.length)];
       if (t.type==='six'){
         const forms = v.tenses[t.key];
         const idxs = [0,1,2,3,4,5].filter(i => forms[i] && forms[i].trim());
         if (!idxs.length) continue;
         const pi = idxs[Math.floor(Math.random()*idxs.length)];
-        return {v, tense:t, kind:'six', pIndex:pi,
-          personLabel:SIX[pi].label, answer:forms[pi]};
+        return {v, tense:t, kind:'six', personLabel:SIX[pi].label, answer:forms[pi]};
       } else {
         const m = v.tenses[t.key] || {};
         const keys = IMPER.map(x=>x.k).filter(k => m[k] && m[k].trim());
         if (!keys.length) continue;
         const pk = keys[Math.floor(Math.random()*keys.length)];
-        const pl = IMPER.find(x=>x.k===pk).label;
-        return {v, tense:t, kind:'imper', pKey:pk, personLabel:pl, answer:m[pk]};
+        return {v, tense:t, kind:'imper', personLabel:IMPER.find(x=>x.k===pk).label, answer:m[pk]};
       }
     }
     return null;
   }
   
-  // ---- normalization / checking ----
   function norm(s){ return (s||'').trim().toLowerCase().replace(/\s+/g,' '); }
   function stripAccents(s){ return s.replace(/á/g,'a').replace(/é/g,'e').replace(/í/g,'i').replace(/ó/g,'o').replace(/ú/g,'u').replace(/ü/g,'u'); }
   function check(input){
@@ -123,29 +112,26 @@
     return {ok:false, accent:false};
   }
   
-  // ---- render ----
   function next(){
     answered = false;
     cur = pickQuestion();
     if (!cur){
       el.verb.textContent = 'Sin tiempos activos';
       el.gloss.textContent = 'Abre ajustes y elige al menos un tiempo.';
-      el.meta.innerHTML=''; el.person.textContent='';
+      el.toptag.textContent=''; el.tense.textContent=''; el.tdesc.textContent=''; el.person.textContent='';
       el.answer.style.display='none'; el.accents.innerHTML=''; el.fb.innerHTML=''; el.row.innerHTML='';
       return;
     }
     recent.push(cur.v.inf); if (recent.length>30) recent.shift();
-    el.meta.innerHTML = `<span>${cur.tense.label}</span><span class="dot">/</span>`+
-      `<span>${cur.v.irregular?'irregular':'regular'}</span>`;
+    el.toptag.textContent = cur.v.irregular ? 'irregular' : 'regular';
     el.verb.textContent = cur.v.inf;
     el.gloss.textContent = cur.v.gloss;
-    el.person.innerHTML = cur.kind==='six'
-      ? `<b>${cur.personLabel}</b>`
-      : `<b>${cur.personLabel}</b>`;
+    el.tense.textContent = cur.tense.label;
+    el.tdesc.textContent = cur.tense.desc;
+    el.person.innerHTML = `<b>${cur.personLabel}</b>`;
     el.answer.style.display='';
     el.answer.className='answer';
     el.answer.value='';
-    el.answer.disabled=false;
     el.fb.innerHTML='';
     renderAccents();
     renderRow();
@@ -155,8 +141,7 @@
     const chars = ['á','é','í','ó','ú','ñ','ü'];
     el.accents.innerHTML='';
     chars.forEach(c=>{
-      const b=document.createElement('button');
-      b.type='button'; b.textContent=c;
+      const b=document.createElement('button'); b.type='button'; b.textContent=c;
       b.onclick=()=>{ insertAtCursor(el.answer, c); el.answer.focus(); };
       el.accents.appendChild(b);
     });
@@ -175,11 +160,9 @@
     el.row.appendChild(btn);
     if (answered){
       const less=document.createElement('button');
-      less.className='ghost'; less.textContent='ver menos';
-      less.onclick=()=>adjust(0.4);
+      less.className='ghost'; less.textContent='ver menos'; less.onclick=()=>adjust(0.4);
       const more=document.createElement('button');
-      more.className='ghost'; more.textContent='ver más';
-      more.onclick=()=>adjust(1.8);
+      more.className='ghost'; more.textContent='ver más'; more.onclick=()=>adjust(1.8);
       el.row.appendChild(less); el.row.appendChild(more);
     }
     const cnt=document.createElement('span');
@@ -188,47 +171,59 @@
   }
   function submit(){
     if (answered) return;
-    const res = check(el.answer.value);
+    const your = el.answer.value.trim();
+    const res = check(your);
     answered = true;
     cfg.seen = (cfg.seen||0)+1; saveCfg();
-    el.answer.disabled=true;
     el.answer.classList.add(res.ok?'good':'bad');
     let html='';
     if (res.ok){
-      html += `<div class="res good">correcto</div>`;
-      html += `<div class="correct">${cur.answer}</div>`;
+      html = `<div class="flag good"><span class="ic">✓</span>correcto</div>`
+           + `<div class="sol good">${cur.answer}</div>`;
     } else {
-      html += `<div class="res bad">${res.accent?'casi — revisa la tilde':'no es correcto'}</div>`;
-      if ((el.answer.value||'').trim())
-        html += `<div class="typed">${escapeHtml(el.answer.value.trim())}</div>`;
-      html += `<div class="correct" style="color:var(--terra)">${cur.answer}</div>`;
+      html = `<div class="flag bad"><span class="ic">✗</span>${res.accent?'casi — la tilde':'no es correcto'}</div>`;
+      if (your) html += `<div class="you">tu respuesta: <s>${escapeHtml(your)}</s></div>`;
+      html += `<div class="sol bad">${cur.answer}</div>`;
     }
-    el.fb.innerHTML=html;
+    el.fb.innerHTML = html;
+    // history
+    history.unshift({ok:res.ok, verb:cur.v.inf, person:cur.personLabel, form:cur.answer, your});
+    if (history.length>40) history.pop();
+    renderHistory();
     renderRow();
   }
-  function escapeHtml(s){ return s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+  function renderHistory(){
+    if (!history.length){ el.history.className='history'; return; }
+    el.history.className='history show';
+    el.history.innerHTML = history.map(h=>{
+      const ic = h.ok ? `<span class="hic g">✓</span>` : `<span class="hic b">✗</span>`;
+      const right = h.ok
+        ? `<span class="hform">${escapeHtml(h.form)}</span>`
+        : `${h.your?`<span class="hwrong">${escapeHtml(h.your)}</span>`:''}<span class="hform b">${escapeHtml(h.form)}</span>`;
+      return `<div class="hrow">${ic}<span class="hv">${escapeHtml(h.verb)}</span>`+
+        `<span class="hp">${escapeHtml(h.person)}</span>${right}</div>`;
+    }).join('');
+  }
+  function escapeHtml(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
   function adjust(factor){
     const inf = cur.v.inf;
     let w = cfg.weights[inf]; if (w===undefined) w = cur.v.common?3:1;
     w = Math.max(0.1, Math.min(12, w*factor));
     cfg.weights[inf]=w; saveCfg();
-    // small confirmation
     const note=document.createElement('div');
     note.className='note';
     note.textContent = factor<1 ? `verás «${inf}» menos a menudo` : `verás «${inf}» más a menudo`;
     el.fb.appendChild(note);
   }
   
-  // keyboard
+  // single Enter handler on the input: check, then advance. No document-level duplicate.
   el.answer.addEventListener('keydown', e=>{
-    if (e.key==='Enter'){ e.preventDefault(); if(!answered) submit(); }
-  });
-  document.addEventListener('keydown', e=>{
-    if (e.key==='Enter' && answered && document.activeElement!==el.answer){ next(); }
-    if (e.key==='Enter' && answered && document.activeElement===el.answer){ next(); }
+    if (e.key==='Enter'){
+      e.preventDefault();
+      if (!answered) submit(); else next();
+    }
   });
   
-  // ---- settings ----
   function buildSettings(){
     el.commonOnly.checked = cfg.commonOnly;
     el.commonOnly.onchange=()=>{ cfg.commonOnly=el.commonOnly.checked; recent=[]; saveCfg(); next(); };
