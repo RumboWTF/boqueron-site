@@ -55,14 +55,27 @@
     commonOnly:$('#commonOnly'), tenseOpts:$('#tenseOpts'), reset:$('#resetWeights')
   };
   
-  fetch('conjugations.json').then(r=>r.json()).then(d=>{
-    VERBS = d.verbs || d;
-    buildSettings();
-    next();
-  }).catch(e=>{
-    el.verb.textContent = 'No se pudo cargar conjugations.json';
-    el.gloss.textContent = e.message;
-  });
+  // Guard: if conjugar.html is stale, the new IDs won't exist. Fail loudly and clearly.
+  (function(){
+    const need = ['toptag','verb','gloss','tense','tdesc','person','answer','accents','fb','row','history','panel','gear','closex','commonOnly','tenseOpts','reset'];
+    const missing = need.filter(k => !el[k]);
+    if (missing.length){
+      const host = el.verb || el.gloss || document.getElementById('stage') || document.body;
+      const ids = missing.map(k => k==='reset' ? '#resetWeights' : '#'+k).join(', ');
+      host.textContent = 'conjugar.html está desactualizado — faltan: ' + ids + '. Sustituye los tres archivos (conjugar.html, conjugar.js, yan.css) por las versiones nuevas.';
+      host.style.color = '#B5543A'; host.style.fontSize = '16px';
+      return;
+    }
+    fetch('conjugations.json').then(r=>{ if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }).then(d=>{
+      VERBS = d.verbs || d;
+      if (!VERBS.length) throw new Error('conjugations.json vacío');
+      buildSettings();
+      next();
+    }).catch(e=>{
+      el.verb.textContent = 'No se pudo cargar conjugations.json';
+      el.gloss.textContent = e.message;
+    });
+  })();
   
   function weightOf(v){
     const w = cfg.weights[v.inf];
