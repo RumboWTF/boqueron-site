@@ -6,15 +6,15 @@ const TENSES = [
   {key:'preterito', label:'Pretérito indefinido', desc:'acciones terminadas y puntuales en el pasado', type:'six'},
   {key:'imperfecto', label:'Imperfecto', desc:'acciones en curso, repetidas o descripción en el pasado', type:'six'},
   {key:'futuro', label:'Futuro', desc:'acciones futuras o conjetura sobre el presente', type:'six'},
-  {key:'condicional', label:'Condicional', desc:'hipótesis, cortesía o «futuro del pasado»', type:'six'},
+  {key:'condicional', label:'Condicional', desc:'hipótesis, cortesía o futuro del pasado', type:'six'},
   {key:'subj_presente', label:'Presente de subjuntivo', desc:'deseo, duda o emoción; presente o futuro', type:'six'},
-  {key:'subj_imperfecto_ra', label:'Imperfecto de subjuntivo', desc:'subjuntivo en pasado; condiciones irreales, «si pudiera…»', type:'six'},
+  {key:'subj_imperfecto_ra', label:'Imperfecto de subjuntivo', desc:'subjuntivo en pasado; hipótesis y condiciones irreales', type:'six'},
   {key:'imperativo_afirm', label:'Imperativo afirmativo', desc:'órdenes y peticiones', type:'imper'},
-  {key:'imperativo_neg', label:'Imperativo negativo', desc:'órdenes negativas, «no lo hagas»', type:'imper'},
-  {key:'perfecto', label:'Pretérito perfecto', desc:'pasado reciente o ligado al presente, «he hecho»', type:'six'},
-  {key:'pluscuamperfecto', label:'Pluscuamperfecto', desc:'acción anterior a otra pasada, «ya había hecho»', type:'six'},
-  {key:'cond_compuesto', label:'Condicional compuesto', desc:'lo que habría pasado, «habría hecho»', type:'six'},
-  {key:'subj_pluscuam', label:'Pluscuamperfecto de subjuntivo', desc:'pasado irreal, «si hubiera hecho…»', type:'six'},
+  {key:'imperativo_neg', label:'Imperativo negativo', desc:'prohibiciones y órdenes negativas', type:'imper'},
+  {key:'perfecto', label:'Pretérito perfecto', desc:'pasado reciente, aún relevante en el presente', type:'six'},
+  {key:'pluscuamperfecto', label:'Pluscuamperfecto', desc:'acción pasada anterior a otra acción pasada', type:'six'},
+  {key:'cond_compuesto', label:'Condicional compuesto', desc:'resultado hipotético de algo que no ocurrió', type:'six'},
+  {key:'subj_pluscuam', label:'Pluscuamperfecto de subjuntivo', desc:'subjuntivo para lo irreal o no ocurrido en el pasado', type:'six'},
 ];
 const SIX = [
   {i:0,label:'yo'},{i:1,label:'tú'},{i:2,label:'él / ella / usted'},
@@ -32,7 +32,7 @@ let cfg = loadCfg();
 let recent = [];
 let cur = null;
 let answered = false;
-let history = [];
+let history = [];   // {ok, verb, person, form, your}
 
 function loadCfg(){
   let c = {};
@@ -41,8 +41,8 @@ function loadCfg(){
     commonOnly: c.commonOnly !== undefined ? c.commonOnly : true,
     tenses: Array.isArray(c.tenses) && c.tenses.length ? c.tenses : DEFAULT_TENSES.slice(),
     weights: c.weights || {},
-    seen: c.seen || 0,
-    seenDay: c.seenDay || '',
+    seen: c.seen || 0,          // lifetime total (kept, not shown)
+    seenDay: c.seenDay || '',   // date string of seenToday
     seenToday: c.seenToday || 0
   };
 }
@@ -63,6 +63,7 @@ const el = {
   commonOnly:$('#commonOnly'), tenseOpts:$('#tenseOpts'), reset:$('#resetWeights')
 };
 
+// Guard: if conjugar.html is stale, the new IDs won't exist. Fail loudly and clearly.
 (function(){
   const need = ['toptag','verb','gloss','tense','tdesc','person','answer','accents','fb','row','history','panel','gear','closex','commonOnly','tenseOpts','reset'];
   const missing = need.filter(k => !el[k]);
@@ -144,6 +145,7 @@ function next(){
   }
   recent.push(cur.v.inf); if (recent.length>30) recent.shift();
   el.toptag.textContent = cur.v.irregular ? 'irregular' : 'regular';
+  restartFade(el.toptag);
   el.verb.textContent = cur.v.inf;
   el.gloss.textContent = cur.v.gloss;
   el.tense.innerHTML = `${escapeHtml(cur.tense.label)} <span class="td">(${escapeHtml(cur.tense.desc)})</span>`;
@@ -202,6 +204,7 @@ function submit(){
     html += `<div class="sol bad">${cur.answer}</div>`;
   }
   el.fb.innerHTML = html;
+  // history
   history.unshift({ok:res.ok, verb:cur.v.inf, person:cur.personLabel, form:cur.answer, your});
   if (history.length>40) history.pop();
   renderHistory();
@@ -221,6 +224,8 @@ function renderHistory(){
   el.history.innerHTML = `<div class="hhead">historial · ${cfg.seenToday} hoy</div>${rows}`;
 }
 function escapeHtml(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+// restart the CSS fade on a persistent element (the fresh .td restarts on its own)
+function restartFade(elm){ elm.style.animation='none'; void elm.offsetWidth; elm.style.animation=''; }
 function adjust(factor){
   const inf = cur.v.inf;
   let w = cfg.weights[inf]; if (w===undefined) w = cur.v.common?3:1;
@@ -232,6 +237,7 @@ function adjust(factor){
   el.fb.appendChild(note);
 }
 
+// single Enter handler on the input: check, then advance. No document-level duplicate.
 el.answer.addEventListener('keydown', e=>{
   if (e.key==='Enter'){
     e.preventDefault();
