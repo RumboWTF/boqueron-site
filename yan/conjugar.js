@@ -47,7 +47,8 @@ function loadCfg(){
     seenDay: c.seenDay || '',   // date string of seenToday
     seenToday: c.seenToday || 0,
     bestStreak: c.bestStreak || 0,
-    soundOn: c.soundOn || false
+    soundOn: c.soundOn || false,
+    accents: c.accents || false   // on-screen áéíóúñü buttons, off by default
   };
 }
 function saveCfg(){ try{ localStorage.setItem(LS, JSON.stringify(cfg)); }catch(e){} }
@@ -65,12 +66,13 @@ const el = {
   fb:$('#fb'), row:$('#row'), history:$('#history'),
   streak:$('#streak'), stats:$('#stats'), celebrate:$('#celebrate'),
   panel:$('#panel'), gear:$('#gear'), closex:$('#closex'),
-  commonOnly:$('#commonOnly'), soundOn:$('#soundOn'), tenseOpts:$('#tenseOpts'), reset:$('#resetWeights')
+  commonOnly:$('#commonOnly'), soundOn:$('#soundOn'), showAccents:$('#showAccents'),
+  tenseOpts:$('#tenseOpts'), reset:$('#resetWeights')
 };
 
 // Guard: if conjugar.html is stale, the new IDs won't exist. Fail loudly and clearly.
 (function(){
-  const need = ['toptag','verb','gloss','tense','tdesc','person','answer','accents','fb','row','history','streak','stats','celebrate','panel','gear','closex','commonOnly','soundOn','tenseOpts','reset'];
+  const need = ['toptag','verb','gloss','tense','tdesc','person','answer','accents','fb','row','history','streak','stats','celebrate','panel','gear','closex','commonOnly','soundOn','showAccents','tenseOpts','reset'];
   const missing = need.filter(k => !el[k]);
   if (missing.length){
     const host = el.verb || el.gloss || document.getElementById('stage') || document.body;
@@ -165,8 +167,9 @@ function next(){
   el.answer.focus();
 }
 function renderAccents(){
-  const chars = ['á','é','í','ó','ú','ñ','ü'];
   el.accents.innerHTML='';
+  if (!cfg.accents) return;   // default: type them on the keyboard
+  const chars = ['á','é','í','ó','ú','ñ','ü'];
   chars.forEach(c=>{
     const b=document.createElement('button'); b.type='button'; b.textContent=c;
     b.onclick=()=>{ insertAtCursor(el.answer, c); el.answer.focus(); };
@@ -380,6 +383,8 @@ function buildSettings(){
   el.commonOnly.onchange=()=>{ cfg.commonOnly=el.commonOnly.checked; recent=[]; saveCfg(); pushPrefs(); next(); };
   el.soundOn.checked = cfg.soundOn;
   el.soundOn.onchange=()=>{ cfg.soundOn=el.soundOn.checked; saveCfg(); };
+  el.showAccents.checked = cfg.accents;
+  el.showAccents.onchange=()=>{ cfg.accents=el.showAccents.checked; saveCfg(); renderAccents(); };
   buildTenseOpts();
   el.reset.onclick=()=>{ cfg.weights={}; saveCfg(); pushPrefs(); el.reset.textContent='pesos restablecidos'; };
   el.gear.onclick=()=>el.panel.classList.add('open');
