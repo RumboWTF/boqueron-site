@@ -124,3 +124,49 @@ a{color:inherit}
   justify-self:end;text-align:right}
 .hwrong{color:var(--terra);text-decoration:line-through;font-size:13px;opacity:.7}
 .hform{font-weight:600;color:var(--ok)}
+
+/* top-bar right cluster + current-streak pill */
+.barright{display:flex;align-items:center;gap:12px}
+.streakpill{font-family:var(--mono);font-size:13px;font-weight:500;letter-spacing:.04em;
+  color:var(--terra);background:var(--card);border:1px solid var(--line);
+  border-radius:999px;padding:3px 10px;white-space:nowrap}
+.streakpill.bump{animation:bump .32s ease}
+@keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
+
+/* stats strip above history */
+.stats{display:none;margin:30px 0 0}
+.stats.show{display:block}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-size:13px;color:var(--sec);background:var(--card);border:1px solid var(--line);
+  border-radius:8px;padding:5px 11px}
+.chip b{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+.weak{margin-top:10px;font-size:13px;color:var(--sec);line-height:1.6}
+.weak span{color:var(--text);white-space:nowrap}
+.weak .sep{color:var(--line);font-style:normal;margin:0 6px}
+
+/* milestone celebration overlay (non-blocking) */
+.celebrate{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:40}
+.toast{position:absolute;top:32%;left:50%;transform:translate(-50%,-50%);
+  font-weight:700;color:var(--acc);text-shadow:0 2px 16px rgba(250,250,247,.75);
+  animation:toastPop 1.2s cubic-bezier(.2,.8,.2,1) forwards;white-space:nowrap}
+.toast.sm{font-size:40px}
+.toast.mid{font-size:62px}
+.toast.big{font-size:86px}
+.toast.record{color:#C9A227}
+@keyframes toastPop{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.6)}
+  18%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}
+  32%{transform:translate(-50%,-50%) scale(1)}
+  78%{opacity:1}
+  100%{opacity:0;transform:translate(-50%,-64%) scale(1)}
+}
+.confdot{position:absolute;top:-6vh;width:9px;height:9px;border-radius:2px;
+  animation:confFall 1s linear forwards}
+@keyframes confFall{
+  0%{opacity:1;transform:translateY(0) rotate(0)}
+  100%{opacity:0;transform:translateY(92vh) rotate(540deg)}
+}
+@media (prefers-reduced-motion: reduce){
+  .confdot{display:none}
+  .streakpill.bump{animation:none}
+}

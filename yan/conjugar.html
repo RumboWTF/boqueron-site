@@ -7,12 +7,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="yan.css?v=7">
+<link rel="stylesheet" href="yan.css?v=8">
 </head>
 <body>
 <div class="bar">
   <a class="home" href="index.html">← práctica</a>
-  <button class="gear" id="gear" aria-label="ajustes">⚙</button>
+  <div class="barright">
+    <span class="streakpill" id="streak" hidden></span>
+    <button class="gear" id="gear" aria-label="ajustes">⚙</button>
+  </div>
 </div>
 
 <div class="stage" id="stage">
@@ -29,8 +32,10 @@
     <div class="row" id="row"></div>
   </div>
   <div class="fb" id="fb"></div>
+  <div class="stats" id="stats"></div>
   <div class="history" id="history"></div>
 </div>
+<div class="celebrate" id="celebrate" aria-hidden="true"></div>
 
 <div class="panel" id="panel">
   <div class="inner">
@@ -38,6 +43,7 @@
     <h2>Ajustes</h2>
     <div class="sync"><div id="syncBody"></div></div>
     <label class="opt"><input type="checkbox" id="commonOnly"> Solo verbos comunes (146)</label>
+    <label class="opt"><input type="checkbox" id="soundOn"> Sonido en los hitos de racha</label>
     <h3>Tiempos a practicar</h3>
     <div id="tenseOpts"></div>
     <h3>Pesos</h3>
@@ -47,6 +53,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="sync.js?v=1"></script>
-<script src="conjugar.js?v=7"></script>
+<script src="conjugar.js?v=8"></script>
 </body>
 </html>

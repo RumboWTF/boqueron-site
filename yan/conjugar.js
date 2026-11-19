@@ -33,6 +33,8 @@ let recent = [];
 let cur = null;
 let answered = false;
 let history = [];   // {ok, verb, person, form, your}
+let streak = 0;     // current in-session correct streak
+let samples = [];   // recent {tense, person, correct} for rolling stats
 
 function loadCfg(){
   let c = {};
@@ -43,7 +45,9 @@ function loadCfg(){
     weights: c.weights || {},
     seen: c.seen || 0,          // lifetime total (kept, not shown)
     seenDay: c.seenDay || '',   // date string of seenToday
-    seenToday: c.seenToday || 0
+    seenToday: c.seenToday || 0,
+    bestStreak: c.bestStreak || 0,
+    soundOn: c.soundOn || false
   };
 }
 function saveCfg(){ try{ localStorage.setItem(LS, JSON.stringify(cfg)); }catch(e){} }
@@ -59,13 +63,14 @@ const el = {
   toptag:$('#toptag'), verb:$('#verb'), gloss:$('#gloss'), tense:$('#tense'),
   tdesc:$('#tdesc'), person:$('#person'), answer:$('#answer'), accents:$('#accents'),
   fb:$('#fb'), row:$('#row'), history:$('#history'),
+  streak:$('#streak'), stats:$('#stats'), celebrate:$('#celebrate'),
   panel:$('#panel'), gear:$('#gear'), closex:$('#closex'),
-  commonOnly:$('#commonOnly'), tenseOpts:$('#tenseOpts'), reset:$('#resetWeights')
+  commonOnly:$('#commonOnly'), soundOn:$('#soundOn'), tenseOpts:$('#tenseOpts'), reset:$('#resetWeights')
 };
 
 // Guard: if conjugar.html is stale, the new IDs won't exist. Fail loudly and clearly.
 (function(){
-  const need = ['toptag','verb','gloss','tense','tdesc','person','answer','accents','fb','row','history','panel','gear','closex','commonOnly','tenseOpts','reset'];
+  const need = ['toptag','verb','gloss','tense','tdesc','person','answer','accents','fb','row','history','streak','stats','celebrate','panel','gear','closex','commonOnly','soundOn','tenseOpts','reset'];
   const missing = need.filter(k => !el[k]);
   if (missing.length){
     const host = el.verb || el.gloss || document.getElementById('stage') || document.body;
@@ -214,6 +219,14 @@ function submit(){
     verb: cur.v.inf, tense: cur.tense.key, person: cur.personLabel,
     answer: cur.answer, response: your, correct: res.ok
   });
+  // streak + rolling stats
+  const prevBest = cfg.bestStreak;
+  if (res.ok) streak++; else streak = 0;
+  if (streak > cfg.bestStreak){ cfg.bestStreak = streak; saveCfg(); }
+  renderStreak();
+  pushSample(cur.tense.key, cur.personLabel, res.ok);
+  renderStats();
+  if (res.ok && streak % 5 === 0) celebrate(streak, streak > prevBest);
 }
 function renderHistory(){
   if (!history.length){ el.history.className='history'; el.history.innerHTML=''; return; }
@@ -226,9 +239,106 @@ function renderHistory(){
     return `<div class="hrow">${ic}<span class="hv">${escapeHtml(h.verb)}</span>`+
       `<span class="hp">${escapeHtml(h.person)}</span><span class="hres">${res}</span></div>`;
   }).join('');
-  el.history.innerHTML = `<div class="hhead">historial · ${cfg.seenToday} hoy</div>${rows}`;
+  el.history.innerHTML = `<div class="hhead">historial</div>${rows}`;
 }
 function escapeHtml(s){ return (s||'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c])); }
+
+// ---- streak + stats + celebration ----
+const TLABEL = {
+  presente:'pres.', preterito:'pret.', imperfecto:'imperf.', futuro:'fut.', condicional:'cond.',
+  subj_presente:'subj pres.', subj_imperfecto_ra:'subj imperf.', imperativo_afirm:'imper. +',
+  imperativo_neg:'imper. −', perfecto:'perf.', pluscuamperfecto:'plusc.', cond_compuesto:'cond. comp.',
+  subj_pluscuam:'subj plusc.'
+};
+function personShort(p){
+  if (p === 'él / ella / usted') return 'él/ud.';
+  if (p === 'ellos / ellas / ustedes') return 'ellos/uds.';
+  return p;
+}
+function pushSample(tense, person, ok){
+  samples.unshift({ tense, person, correct: ok });
+  if (samples.length > 500) samples.pop();
+}
+function renderStreak(){
+  if (streak >= 1){
+    el.streak.hidden = false;
+    el.streak.textContent = '🔥 ' + streak;
+    el.streak.classList.remove('bump'); void el.streak.offsetWidth; el.streak.classList.add('bump');
+  } else {
+    el.streak.hidden = true; el.streak.textContent = '';
+  }
+}
+function computeStats(){
+  const total = samples.length;
+  if (!total) return null;
+  const win = samples.slice(0, Math.min(100, total));
+  const ok = win.reduce((n,s)=> n + (s.correct?1:0), 0);
+  const precision = Math.round(100 * ok / win.length);
+  const by = {};
+  samples.forEach(s => {
+    const k = s.tense + '|' + s.person;
+    by[k] = by[k] || { tense:s.tense, person:s.person, n:0, ok:0 };
+    by[k].n++; if (s.correct) by[k].ok++;
+  });
+  const weak = Object.keys(by).map(k=>by[k]).filter(g => g.n >= 5)
+    .map(g => ({ tense:g.tense, person:g.person, acc: g.ok/g.n }))
+    .sort((a,b)=> a.acc - b.acc).slice(0,3);
+  return { precision, weak, total };
+}
+function renderStats(){
+  const s = computeStats();
+  if (!s){ el.stats.className='stats'; el.stats.innerHTML=''; return; }
+  el.stats.className='stats show';
+  const chips = `<span class="chip"><b>${cfg.seenToday}</b> hoy</span>`
+    + `<span class="chip"><b>${s.precision}%</b> precisión</span>`
+    + `<span class="chip"><b>${cfg.bestStreak}</b> mejor racha</span>`;
+  let weak = '';
+  if (s.weak.length){
+    weak = `<div class="weak">flojo en: ` + s.weak.map(w =>
+      `<span>${TLABEL[w.tense]||w.tense} · ${personShort(w.person)} ${Math.round(w.acc*100)}%</span>`
+    ).join('<i class="sep">·</i>') + `</div>`;
+  }
+  el.stats.innerHTML = `<div class="chips">${chips}</div>${weak}`;
+}
+function celebrate(n, isRecord){
+  const old = el.celebrate.querySelectorAll('.toast');
+  for (let i=0;i<old.length;i++) old[i].remove();
+  const t = document.createElement('div');
+  const tier = n >= 25 ? 'big' : (n >= 10 ? 'mid' : 'sm');
+  t.className = 'toast ' + tier + (isRecord ? ' record' : '');
+  t.textContent = isRecord ? ('¡récord! ' + n) : ('¡' + n + '!');
+  el.celebrate.appendChild(t);
+  setTimeout(()=> t.remove(), 1200);
+  if (n % 10 === 0 || isRecord) confetti();
+  blip(n/5);
+}
+function confetti(){
+  const colors = ['#0E7C8B','#B86B4A','#2E6E52','#C9A227'];
+  for (let i=0;i<16;i++){
+    const d = document.createElement('i');
+    d.className = 'confdot';
+    d.style.left = (10 + Math.random()*80) + 'vw';
+    d.style.background = colors[i % colors.length];
+    d.style.animationDelay = (Math.random()*0.12) + 's';
+    el.celebrate.appendChild(d);
+    setTimeout(()=> d.remove(), 1100);
+  }
+}
+let actx = null;
+function blip(tier){
+  if (!cfg.soundOn) return;
+  try {
+    actx = actx || new (window.AudioContext || window.webkitAudioContext)();
+    const o = actx.createOscillator(), g = actx.createGain();
+    o.type = 'sine'; o.frequency.value = 440 + tier * 90;
+    o.connect(g); g.connect(actx.destination);
+    const t = actx.currentTime;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(0.14, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + 0.3);
+    o.start(t); o.stop(t + 0.32);
+  } catch(e){}
+}
 // restart the CSS fade on a persistent element (the fresh .td restarts on its own)
 function restartFade(elm){ elm.style.animation='none'; void elm.offsetWidth; elm.style.animation=''; }
 function adjust(factor){
@@ -268,6 +378,8 @@ function buildTenseOpts(){
 function buildSettings(){
   el.commonOnly.checked = cfg.commonOnly;
   el.commonOnly.onchange=()=>{ cfg.commonOnly=el.commonOnly.checked; recent=[]; saveCfg(); pushPrefs(); next(); };
+  el.soundOn.checked = cfg.soundOn;
+  el.soundOn.onchange=()=>{ cfg.soundOn=el.soundOn.checked; saveCfg(); };
   buildTenseOpts();
   el.reset.onclick=()=>{ cfg.weights={}; saveCfg(); pushPrefs(); el.reset.textContent='pesos restablecidos'; };
   el.gear.onclick=()=>el.panel.classList.add('open');
@@ -301,6 +413,9 @@ async function hydrateFromServer(){
     const h = await YanSync.loadHistory(40);
     if (h.length) history = h;
     renderHistory();
+    const rec = await YanSync.loadRecent(400);
+    if (rec.length) samples = rec.map(r => ({ tense:r.tense, person:r.person, correct:r.correct }));
+    renderStats();
     recent = [];
     next();
   } catch(e){ console.warn('[yan] hydrate failed', e); }

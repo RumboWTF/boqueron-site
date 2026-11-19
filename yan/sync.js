@@ -96,5 +96,15 @@ async function loadHistory(limit){
   }));
 }
 
-window.YanSync = { init, user, sendMagicLink, signOut, logAttempt, loadPrefs, savePrefs, loadToday, loadHistory };
+// recent attempts (newest first) for rolling accuracy + person/tense weak spots
+async function loadRecent(limit){
+  if (!client || !currentUser) return [];
+  const { data, error } = await client.from('attempts')
+    .select('tense,person,correct')
+    .order('created_at', { ascending: false }).limit(limit || 400);
+  if (error){ console.warn('[yan] recent load:', error.message); return []; }
+  return data || [];
+}
+
+window.YanSync = { init, user, sendMagicLink, signOut, logAttempt, loadPrefs, savePrefs, loadToday, loadHistory, loadRecent };
 })();
