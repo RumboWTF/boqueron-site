@@ -309,12 +309,12 @@ function renderAuthUI(u){
   const body = document.getElementById('syncBody');
   if (!body) return;
   if (u){
-    body.innerHTML = `<p class="syncnote">conectado como <b>${escapeHtml(u.email||'')}</b></p>`
-      + `<button class="ghost" id="syncOut" style="padding-left:0">cerrar sesión</button>`;
+    body.innerHTML = `<div class="syncline">conectado · <b>${escapeHtml(u.email||'')}</b> · `
+      + `<button class="linkbtn" id="syncOut">cerrar sesión</button></div>`;
     const out = document.getElementById('syncOut');
     if (out) out.onclick = async () => { await YanSync.signOut(); };
   } else {
-    body.innerHTML = `<p class="syncnote">Entra con tu correo para sincronizar el progreso entre dispositivos. Sin contraseña.</p>`
+    body.innerHTML = `<p class="syncnote">Sincroniza el progreso entre dispositivos, sin contraseña.</p>`
       + `<div class="syncrow"><input type="email" id="syncEmail" placeholder="tu@correo.com" autocomplete="email"><button class="btn sm" id="syncBtn">enviar enlace</button></div>`
       + `<p class="syncmsg" id="syncMsg"></p>`;
     const btn = document.getElementById('syncBtn');
