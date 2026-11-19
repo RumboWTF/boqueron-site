@@ -79,6 +79,7 @@ const el = {
     if (!VERBS.length) throw new Error('conjugations.json vacío');
     buildSettings();
     next();
+    if (window.YanSync) YanSync.init((u) => { renderAuthUI(u); if (u) hydrateFromServer(); });
   }).catch(e=>{
     el.verb.textContent = 'No se pudo cargar conjugations.json';
     el.gloss.textContent = e.message;
@@ -209,6 +210,10 @@ function submit(){
   if (history.length>40) history.pop();
   renderHistory();
   renderRow();
+  if (window.YanSync) YanSync.logAttempt({
+    verb: cur.v.inf, tense: cur.tense.key, person: cur.personLabel,
+    answer: cur.answer, response: your, correct: res.ok
+  });
 }
 function renderHistory(){
   if (!history.length){ el.history.className='history'; el.history.innerHTML=''; return; }
@@ -230,7 +235,7 @@ function adjust(factor){
   const inf = cur.v.inf;
   let w = cfg.weights[inf]; if (w===undefined) w = cur.v.common?3:1;
   w = Math.max(0.1, Math.min(12, w*factor));
-  cfg.weights[inf]=w; saveCfg();
+  cfg.weights[inf]=w; saveCfg(); pushPrefs();
   const note=document.createElement('div');
   note.className='note';
   note.textContent = factor<1 ? `verás «${inf}» menos a menudo` : `verás «${inf}» más a menudo`;
@@ -245,9 +250,7 @@ el.answer.addEventListener('keydown', e=>{
   }
 });
 
-function buildSettings(){
-  el.commonOnly.checked = cfg.commonOnly;
-  el.commonOnly.onchange=()=>{ cfg.commonOnly=el.commonOnly.checked; recent=[]; saveCfg(); next(); };
+function buildTenseOpts(){
   el.tenseOpts.innerHTML='';
   TENSES.forEach(t=>{
     const lab=document.createElement('label'); lab.className='opt';
@@ -256,14 +259,80 @@ function buildSettings(){
     cb.onchange=()=>{
       if (cb.checked){ if(!cfg.tenses.includes(t.key)) cfg.tenses.push(t.key); }
       else cfg.tenses = cfg.tenses.filter(k=>k!==t.key);
-      saveCfg();
+      saveCfg(); pushPrefs();
     };
     lab.appendChild(cb); lab.appendChild(document.createTextNode(' '+t.label));
     el.tenseOpts.appendChild(lab);
   });
-  el.reset.onclick=()=>{ cfg.weights={}; saveCfg(); el.reset.textContent='pesos restablecidos'; };
+}
+function buildSettings(){
+  el.commonOnly.checked = cfg.commonOnly;
+  el.commonOnly.onchange=()=>{ cfg.commonOnly=el.commonOnly.checked; recent=[]; saveCfg(); pushPrefs(); next(); };
+  buildTenseOpts();
+  el.reset.onclick=()=>{ cfg.weights={}; saveCfg(); pushPrefs(); el.reset.textContent='pesos restablecidos'; };
   el.gear.onclick=()=>el.panel.classList.add('open');
   el.closex.onclick=()=>{ el.panel.classList.remove('open'); next(); };
   el.panel.onclick=(e)=>{ if(e.target===el.panel){ el.panel.classList.remove('open'); next(); } };
+}
+
+// ---- Supabase sync (optional; no-ops when logged out) ----
+let prefsTimer = null;
+function pushPrefs(){
+  if (!window.YanSync || !YanSync.user()) return;
+  clearTimeout(prefsTimer);
+  prefsTimer = setTimeout(() => {
+    YanSync.savePrefs({ commonOnly: cfg.commonOnly, tenses: cfg.tenses, weights: cfg.weights });
+  }, 700);
+}
+async function hydrateFromServer(){
+  if (!window.YanSync) return;
+  try {
+    const p = await YanSync.loadPrefs();
+    if (p){
+      if (typeof p.common_only === 'boolean') cfg.commonOnly = p.common_only;
+      if (Array.isArray(p.tenses) && p.tenses.length) cfg.tenses = p.tenses;
+      if (p.weights && typeof p.weights === 'object') cfg.weights = p.weights;
+      el.commonOnly.checked = cfg.commonOnly;
+      buildTenseOpts();
+      saveCfg();
+    }
+    const today = await YanSync.loadToday();
+    if (today !== null){ cfg.seenDay = todayStr(); cfg.seenToday = today; saveCfg(); }
+    const h = await YanSync.loadHistory(40);
+    if (h.length) history = h;
+    renderHistory();
+    recent = [];
+    next();
+  } catch(e){ console.warn('[yan] hydrate failed', e); }
+}
+function renderAuthUI(u){
+  const body = document.getElementById('syncBody');
+  if (!body) return;
+  if (u){
+    body.innerHTML = `<p class="syncnote">conectado como <b>${escapeHtml(u.email||'')}</b></p>`
+      + `<button class="ghost" id="syncOut" style="padding-left:0">cerrar sesión</button>`;
+    const out = document.getElementById('syncOut');
+    if (out) out.onclick = async () => { await YanSync.signOut(); };
+  } else {
+    body.innerHTML = `<p class="syncnote">Entra con tu correo para sincronizar el progreso entre dispositivos. Sin contraseña.</p>`
+      + `<div class="syncrow"><input type="email" id="syncEmail" placeholder="tu@correo.com" autocomplete="email"><button class="btn sm" id="syncBtn">enviar enlace</button></div>`
+      + `<p class="syncmsg" id="syncMsg"></p>`;
+    const btn = document.getElementById('syncBtn');
+    const inp = document.getElementById('syncEmail');
+    const msg = document.getElementById('syncMsg');
+    const go = async () => {
+      const email = (inp.value||'').trim();
+      if (!email || email.indexOf('@') < 1){ msg.className='syncmsg err'; msg.textContent='introduce un correo válido'; return; }
+      btn.disabled = true; msg.className='syncmsg'; msg.textContent='enviando…';
+      try {
+        await YanSync.sendMagicLink(email);
+        msg.className='syncmsg'; msg.textContent='revisa tu correo y abre el enlace en este dispositivo';
+      } catch(e){
+        msg.className='syncmsg err'; msg.textContent = (e && e.message) || 'no se pudo enviar'; btn.disabled = false;
+      }
+    };
+    if (btn) btn.onclick = go;
+    if (inp) inp.addEventListener('keydown', e => { if (e.key==='Enter'){ e.preventDefault(); go(); }});
+  }
 }
 })();
