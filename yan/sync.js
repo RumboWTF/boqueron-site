@@ -10,26 +10,26 @@ const SUPABASE_KEY = 'sb_publishable_vmdnQDicnE4fI8MdvdzGFw_5IlAAGIp';
 let client = null, currentUser = null;
 const cbs = [];
 
-function notify(){ cbs.forEach(cb => { try { cb(currentUser); } catch(e){} }); }
+function notify(event){ cbs.forEach(cb => { try { cb(currentUser, event); } catch(e){} }); }
 
 function init(onChange){
   if (onChange) cbs.push(onChange);
-  if (client) { if (onChange) onChange(currentUser); return; }
+  if (client) { if (onChange) onChange(currentUser, 'INITIAL'); return; }
   if (!window.supabase || !window.supabase.createClient){
     console.warn('[yan] supabase-js not loaded; sync disabled');
-    notify();
+    notify('NONE');
     return;
   }
   client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, {
     auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
   });
-  client.auth.onAuthStateChange((_evt, session) => {
+  client.auth.onAuthStateChange((event, session) => {
     currentUser = session ? session.user : null;
-    notify();
+    notify(event);
   });
   client.auth.getSession().then(({ data }) => {
     currentUser = data && data.session ? data.session.user : null;
-    notify();
+    notify('INITIAL');
   });
 }
 
@@ -112,7 +112,7 @@ async function loadTodayStats(){
 async function loadRecent(limit){
   if (!client || !currentUser) return [];
   const { data, error } = await client.from('attempts')
-    .select('tense,person,correct')
+    .select('tense,person,correct,created_at')
     .order('created_at', { ascending: false }).limit(limit || 400);
   if (error){ console.warn('[yan] recent load:', error.message); return []; }
   return data || [];

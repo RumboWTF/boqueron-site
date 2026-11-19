@@ -134,7 +134,7 @@ a{color:inherit}
 @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
 
 /* stats strip above history */
-.stats{display:none;margin:14px 0 0}
+.stats{display:none;margin:10px 0 0}
 .stats.show{display:block}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{font-size:13px;color:var(--text);background:var(--card);border:1px solid var(--line);

@@ -34,7 +34,9 @@ let cur = null;
 let answered = false;
 let history = [];   // {ok, verb, person, form, your}
 let streak = 0;     // current in-session correct streak
+let best7d = 0;     // best streak within the last 7 days (beatable target)
 let samples = [];   // recent {tense, person, correct} for rolling stats
+let hydratedFor = null;  // user id we've already pulled server data for
 
 function loadCfg(){
   let c = {};
@@ -88,7 +90,12 @@ const el = {
     if (!VERBS.length) throw new Error('conjugations.json vacío');
     buildSettings();
     next();
-    if (window.YanSync) YanSync.init((u) => { renderAuthUI(u); if (u) hydrateFromServer(); });
+    if (window.YanSync) YanSync.init((u, event) => {
+      renderAuthUI(u);
+      if (!u){ hydratedFor = null; return; }
+      // hydrate once per user; never on token refreshes (would swap the live verb)
+      if (hydratedFor !== u.id){ hydratedFor = u.id; hydrateFromServer(); }
+    });
   }).catch(e=>{
     el.verb.textContent = 'No se pudo cargar conjugations.json';
     el.gloss.textContent = e.message;
@@ -170,7 +177,8 @@ function next(){
 }
 function renderAccents(){
   el.accents.innerHTML='';
-  if (!cfg.accents) return;   // default: type them on the keyboard
+  if (!cfg.accents){ el.accents.style.display='none'; return; }  // collapse; button left-aligns
+  el.accents.style.display='';
   const chars = ['á','é','í','ó','ú','ñ','ü'];
   chars.forEach(c=>{
     const b=document.createElement('button'); b.type='button'; b.textContent=c;
@@ -228,6 +236,7 @@ function submit(){
   const prevBest = cfg.bestStreak;
   if (res.ok) streak++; else streak = 0;
   if (streak > cfg.bestStreak){ cfg.bestStreak = streak; saveCfg(); }
+  if (streak > best7d) best7d = streak;
   renderStreak();
   pushSample(cur.tense.key, cur.personLabel, res.ok);
   renderStats();
@@ -264,6 +273,14 @@ function pushSample(tense, person, ok){
   samples.unshift({ tense, person, correct: ok });
   if (samples.length > 500) samples.pop();
 }
+// longest correct run within the last 7 days (rows newest-first, with created_at)
+function best7dFrom(rows){
+  const cutoff = Date.now() - 7 * 864e5;
+  const within = rows.filter(r => new Date(r.created_at).getTime() >= cutoff).reverse();
+  let best = 0, run = 0;
+  for (let i=0;i<within.length;i++){ if (within[i].correct){ run++; if (run > best) best = run; } else run = 0; }
+  return best;
+}
 function renderStreak(){
   if (streak >= 1){
     el.streak.hidden = false;
@@ -295,7 +312,8 @@ function renderStats(){
   if (!s){ el.stats.className='stats'; el.stats.innerHTML=''; return; }
   el.stats.className='stats show';
   const pct = cfg.seenToday ? Math.round(100 * cfg.seenTodayCorrect / cfg.seenToday) : null;
-  const chips = `<span class="chip"><span class="k">hoy</span><b>${cfg.seenToday}</b>${pct!==null?` · <b>${pct}%</b>`:''}</span>`
+  const chips = `<span class="chip"><span class="k">hoy</span><b>${cfg.seenToday}</b>${pct!==null?` · <b>${pct}%</b> aciertos`:''}</span>`
+    + `<span class="chip"><span class="k">racha 7d</span><b>${best7d}</b></span>`
     + `<span class="chip"><span class="k">mejor racha</span><b>${cfg.bestStreak}</b></span>`;
   let weak = '';
   if (s.weak.length){
@@ -421,10 +439,12 @@ async function hydrateFromServer(){
     if (h.length) history = h;
     renderHistory();
     const rec = await YanSync.loadRecent(400);
-    if (rec.length) samples = rec.map(r => ({ tense:r.tense, person:r.person, correct:r.correct }));
+    if (rec.length){
+      samples = rec.map(r => ({ tense:r.tense, person:r.person, correct:r.correct }));
+      best7d = Math.max(best7d, best7dFrom(rec));
+    }
     renderStats();
-    recent = [];
-    next();
+    // deliberately NOT calling next(): keep the verb currently on screen
   } catch(e){ console.warn('[yan] hydrate failed', e); }
 }
 function renderAuthUI(u){
