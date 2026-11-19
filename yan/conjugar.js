@@ -46,6 +46,7 @@ function loadCfg(){
     seen: c.seen || 0,          // lifetime total (kept, not shown)
     seenDay: c.seenDay || '',   // date string of seenToday
     seenToday: c.seenToday || 0,
+    seenTodayCorrect: c.seenTodayCorrect || 0,
     bestStreak: c.bestStreak || 0,
     soundOn: c.soundOn || false,
     accents: c.accents || false   // on-screen áéíóúñü buttons, off by default
@@ -53,10 +54,11 @@ function loadCfg(){
 }
 function saveCfg(){ try{ localStorage.setItem(LS, JSON.stringify(cfg)); }catch(e){} }
 function todayStr(){ const d=new Date(); return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate(); }
-function bumpCounts(){
+function bumpCounts(ok){
   const t = todayStr();
-  if (cfg.seenDay !== t){ cfg.seenDay = t; cfg.seenToday = 0; }
-  cfg.seenToday++; cfg.seen = (cfg.seen||0)+1;
+  if (cfg.seenDay !== t){ cfg.seenDay = t; cfg.seenToday = 0; cfg.seenTodayCorrect = 0; }
+  cfg.seenToday++; if (ok) cfg.seenTodayCorrect = (cfg.seenTodayCorrect||0) + 1;
+  cfg.seen = (cfg.seen||0)+1;
 }
 
 const $ = s => document.querySelector(s);
@@ -201,7 +203,7 @@ function submit(){
   const your = el.answer.value.trim();
   const res = check(your);
   answered = true;
-  bumpCounts(); saveCfg();
+  bumpCounts(res.ok); saveCfg();
   el.answer.classList.add(res.ok?'good':'bad');
   let html='';
   if (res.ok){
@@ -292,9 +294,9 @@ function renderStats(){
   const s = computeStats();
   if (!s){ el.stats.className='stats'; el.stats.innerHTML=''; return; }
   el.stats.className='stats show';
-  const chips = `<span class="chip"><b>${cfg.seenToday}</b> hoy</span>`
-    + `<span class="chip"><b>${s.precision}%</b> precisión</span>`
-    + `<span class="chip"><b>${cfg.bestStreak}</b> mejor racha</span>`;
+  const pct = cfg.seenToday ? Math.round(100 * cfg.seenTodayCorrect / cfg.seenToday) : null;
+  const chips = `<span class="chip"><span class="k">hoy</span><b>${cfg.seenToday}</b>${pct!==null?` · <b>${pct}%</b>`:''}</span>`
+    + `<span class="chip"><span class="k">mejor racha</span><b>${cfg.bestStreak}</b></span>`;
   let weak = '';
   if (s.weak.length){
     weak = `<div class="weak">flojo en: ` + s.weak.map(w =>
@@ -413,8 +415,8 @@ async function hydrateFromServer(){
       buildTenseOpts();
       saveCfg();
     }
-    const today = await YanSync.loadToday();
-    if (today !== null){ cfg.seenDay = todayStr(); cfg.seenToday = today; saveCfg(); }
+    const ts = await YanSync.loadTodayStats();
+    if (ts){ cfg.seenDay = todayStr(); cfg.seenToday = ts.total; cfg.seenTodayCorrect = ts.correct; saveCfg(); }
     const h = await YanSync.loadHistory(40);
     if (h.length) history = h;
     renderHistory();

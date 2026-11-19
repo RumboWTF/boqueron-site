@@ -96,6 +96,18 @@ async function loadHistory(limit){
   }));
 }
 
+// today's attempts: volume + correct count for the "hoy" chip
+async function loadTodayStats(){
+  if (!client || !currentUser) return null;
+  const start = new Date(); start.setHours(0,0,0,0);
+  const { data, error } = await client.from('attempts')
+    .select('correct').gte('created_at', start.toISOString());
+  if (error){ console.warn('[yan] today stats:', error.message); return null; }
+  const total = data.length;
+  const correct = data.reduce((n,r)=> n + (r.correct?1:0), 0);
+  return { total, correct };
+}
+
 // recent attempts (newest first) for rolling accuracy + person/tense weak spots
 async function loadRecent(limit){
   if (!client || !currentUser) return [];
@@ -106,5 +118,5 @@ async function loadRecent(limit){
   return data || [];
 }
 
-window.YanSync = { init, user, sendMagicLink, signOut, logAttempt, loadPrefs, savePrefs, loadToday, loadHistory, loadRecent };
+window.YanSync = { init, user, sendMagicLink, signOut, logAttempt, loadPrefs, savePrefs, loadToday, loadTodayStats, loadHistory, loadRecent };
 })();

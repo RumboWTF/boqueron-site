@@ -31,19 +31,19 @@ a{color:inherit}
   text-transform:uppercase;color:var(--terra);margin-top:4px}
 .mod.soon .tag{color:var(--sec)}
 /* trainer */
-.stage{max-width:680px;margin:0 auto;padding:10px 20px 60px;
+.stage{max-width:680px;margin:0 auto;padding:6px 20px 44px;
   display:flex;flex-direction:column;align-items:stretch}
-.verb{font-size:46px;font-weight:600;letter-spacing:-.015em;line-height:1.05;margin:0 0 6px}
-.gloss{color:var(--sec);font-size:16px;margin:0 0 26px}
-.answer{width:100%;font-family:var(--sans);font-size:30px;font-weight:600;
-  padding:14px 16px;border:1.5px solid var(--line);border-radius:12px;background:#fff;
+.verb{font-size:40px;font-weight:600;letter-spacing:-.015em;line-height:1.05;margin:0 0 3px}
+.gloss{color:var(--sec);font-size:15px;margin:0 0 12px}
+.answer{width:100%;font-family:var(--sans);font-size:26px;font-weight:600;
+  padding:11px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;
   color:var(--text);outline:none}
 .answer:focus{border-color:var(--teal)}
 .answer.good{border-color:var(--ok);background:#F2F8F4}
 .answer.bad{border-color:var(--terra);background:#FBF2EC}
 /* accents + action button share one row to save vertical space */
 .controls{display:flex;align-items:center;justify-content:space-between;
-  gap:14px;margin-top:14px;flex-wrap:wrap}
+  gap:14px;margin-top:10px;flex-wrap:wrap}
 .accents{display:flex;gap:6px;margin:0;flex-wrap:wrap}
 .accents button{font-family:var(--sans);font-size:17px;border:1px solid var(--line);
   background:#fff;border-radius:8px;width:38px;height:38px;cursor:pointer;color:var(--text)}
@@ -87,28 +87,28 @@ a{color:inherit}
 @keyframes hintIn{from{opacity:0}to{opacity:1}}
 /* regular/irregular tag and tense description fade in, so they're a crutch you can ignore */
 .toptag{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
-  color:var(--sec);margin:24px 0 10px;animation:hintIn 1.4s ease .3s both}
+  color:var(--sec);margin:16px 0 7px;animation:hintIn 1.4s ease .3s both}
 /* tense + person: the two inputs. Same scale/weight, different colour. */
-.tense{font-size:26px;font-weight:600;color:var(--acc);margin:30px 0 0;
-  line-height:1.25;letter-spacing:-.01em}
+.tense{font-size:23px;font-weight:600;color:var(--acc);margin:16px 0 0;
+  line-height:1.2;letter-spacing:-.01em}
 .tense .td{font-size:16px;font-weight:400;font-style:normal;color:var(--sec);letter-spacing:0;
   display:inline-block;animation:hintIn 1.4s ease .3s both}
 .tdesc{display:none}
-.person{font-size:26px;font-weight:600;color:var(--terra);margin:15px 0 22px;
+.person{font-size:23px;font-weight:600;color:var(--terra);margin:9px 0 14px;
   line-height:1.2;letter-spacing:-.01em}
-.fb{margin:22px 0 0;min-height:10px}
-.fb .flag{display:flex;align-items:center;gap:10px;font-size:18px;font-weight:600}
+.fb{margin:12px 0 0;min-height:10px}
+.fb .flag{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600}
 .fb .flag .ic{width:26px;height:26px;border-radius:50%;display:inline-flex;
   align-items:center;justify-content:center;color:#fff;font-size:16px;flex:0 0 auto}
 .fb .flag.good .ic{background:var(--ok)} .fb .flag.good{color:var(--ok)}
 .fb .flag.bad .ic{background:var(--terra)} .fb .flag.bad{color:var(--terra)}
-.fb .sol{font-size:28px;font-weight:600;margin:10px 0 0}
+.fb .sol{font-size:23px;font-weight:600;margin:6px 0 0}
 .fb .sol.good{color:var(--ok)} .fb .sol.bad{color:var(--terra)}
 .fb .you{color:var(--sec);font-size:15px;margin-top:4px}
 .fb .you s{opacity:.8}
 .fb .note{color:var(--sec);font-size:13px;margin-top:8px;font-style:italic}
 /* history: aligned grid, green = right form, red = your miss */
-.history{margin:44px 0 0;border-top:1px solid var(--line);display:none}
+.history{margin:24px 0 0;border-top:1px solid var(--line);display:none}
 .history.show{display:block}
 .hhead{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
   color:var(--sec);padding:14px 0 4px}
@@ -134,12 +134,13 @@ a{color:inherit}
 @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.22)}100%{transform:scale(1)}}
 
 /* stats strip above history */
-.stats{display:none;margin:30px 0 0}
+.stats{display:none;margin:14px 0 0}
 .stats.show{display:block}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
-.chip{font-size:13px;color:var(--sec);background:var(--card);border:1px solid var(--line);
+.chip{font-size:13px;color:var(--text);background:var(--card);border:1px solid var(--line);
   border-radius:8px;padding:5px 11px}
 .chip b{color:var(--text);font-weight:600;font-variant-numeric:tabular-nums}
+.chip .k{color:var(--sec);font-weight:400;margin-right:3px}
 .weak{margin-top:10px;font-size:13px;color:var(--sec);line-height:1.6}
 .weak span{color:var(--text);white-space:nowrap}
 .weak .sep{color:var(--line);font-style:normal;margin:0 6px}
